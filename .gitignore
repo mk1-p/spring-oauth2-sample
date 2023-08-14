@@ -39,4 +39,4 @@ out/
 
 ### application.yaml ###
 /src/main/resources/application-local.yaml
-/src/main/resources/application-oauth-local.yaml
+/src/main/resources/application-loauth.yaml
