@@ -4,16 +4,13 @@ spring:
       client:
         registration:
           google:
-#            client-id: {google-client-id} #(클라이언트 ID)
-            client-id: 910230266499-ddcffjvqcar1oj70osgqbrgk4c5f5p60.apps.googleusercontent.com
-#            client-secret: {google-client-secret} #(클라이언트 보안 비밀번호)
-            client-secret: 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
+            client-id: {google-client-id} #(클라이언트 ID)
+            client-secret: {google-client-secret} #(클라이언트 보안 비밀번호)
             scope:
               - profile
               - email
           kakao:
-#            client-id: {kakao-client-id}
-            client-id: 84ad51c582167a1f31a14306dbe33234
+            client-id: {kakao-client-id}
 
             # Spring OAuth2 기본 리다이렉트 url 형태 ( {base-url}/login/oauth2/code/{registrationId} )
             redirect-uri: http://localhost:8080/login/oauth2/code/{registrationId}
