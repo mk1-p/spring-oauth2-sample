@@ -1,4 +1,4 @@
-package com.example.oauth2sample.domain.api;
+package com.example.oauth2sample.domain.pages;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
