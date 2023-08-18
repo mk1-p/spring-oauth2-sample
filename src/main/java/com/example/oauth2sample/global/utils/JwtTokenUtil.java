@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtTokenUtil {
 
     // JWT 비밀키 (임의로 설정)
@@ -74,18 +75,35 @@ public class JwtTokenUtil {
     }
 
     // JWT 토큰으로부터 registrationId 추출 (google, kakao)
-    public String getRegistrationIdFromToken(String token) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(ACCESS_SECRET).parseClaimsJws(token);
+    public String getRegistrationIdFromAccessToken(String accessToken) {
+        Jws<Claims> claims = Jwts.parser().setSigningKey(ACCESS_SECRET).parseClaimsJws(accessToken);
         return (String) claims.getBody().get("registration_id");
     }
 
     // JWT 토큰 유효성 검사
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String accessToken) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(ACCESS_SECRET).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(ACCESS_SECRET).parseClaimsJws(accessToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
-            return false;
+            log.error("Error : {}",e);
+            throw new RuntimeException("error validate access token");
+        }
+    }
+
+    // RefreshToken 남은 유효기간을 알려줌
+    public long getValidityTimeByRefreshToken(String refreshToken) {
+
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(REFRESH_SECRET).parseClaimsJws(refreshToken);
+            Date expiration = claims.getBody().getExpiration();
+            Date now = new Date();
+            // 현재 시간과
+            long validityTime = (expiration.getTime() - now.getTime())/1000;
+            return validityTime;
+        } catch (Exception e) {
+            log.error("Error : {}",e);
+            throw new RuntimeException("error get validity time from refresh token");
         }
     }
 
