@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 @Entity
@@ -26,6 +27,8 @@ public class Member {
     @Column(name = "registration_id")
     private String registrationId;              // 간편로그인 서비스 구분 (ex : google, kakao)
     @Column
+    private String password;
+    @Column
     private String name;
     @Column
     private String nickname;
@@ -40,16 +43,18 @@ public class Member {
     private Role role;
 
     @Builder
-    public Member(Long id, String attributeId, String registrationId, String name, String nickname, String email, String profileImage, Role role) {
+    public Member(Long id, String attributeId, String registrationId, String password, String name, String nickname, String email, String profileImage, Role role) {
         this.id = id;
         this.attributeId = attributeId;
         this.registrationId = registrationId;
+        this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.profileImage = profileImage;
         this.role = role;
     }
+
 
     public static Member toEntity(CustomUserInfo userInfo) {
         return Member.builder()

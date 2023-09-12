@@ -13,6 +13,13 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+
+    public Member getMember(String attributeId, String registrationId) {
+        return memberRepository.findByAttributeIdAndRegistrationId(attributeId, registrationId)
+                .orElseGet(null);
+    }
+
+
     /**
      * Member 조회 후 저장 및 세팅
      * @param userInfo

@@ -42,6 +42,9 @@ public class CustomUserService implements OAuth2UserService<OAuth2UserRequest, O
 
         Member member = memberService.saveOrUpdate(userInfo);
 
+        // 별도로 OAuth2 리소스 서버에 데이터를 요청하려면 인증서버에서 발급해준 Access, Refresh 토큰을 저장할 것
+        // > 서비스 내 인증 토큰과 혼동X!!
+
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
                 userInfo.getAttributes(),
                 userInfo.getNameAttributeKey());
