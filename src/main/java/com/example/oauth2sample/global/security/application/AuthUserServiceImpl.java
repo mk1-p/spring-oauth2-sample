@@ -1,12 +1,14 @@
 package com.example.oauth2sample.global.security.application;
 
 import com.example.oauth2sample.domain.members.Member;
-import com.example.oauth2sample.domain.members.MemberRepository;
 import com.example.oauth2sample.domain.members.MemberService;
 import com.example.oauth2sample.global.security.dto.CustomUserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -17,14 +19,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
-import java.util.Random;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CustomUserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class AuthUserServiceImpl implements OAuth2UserService<OAuth2UserRequest, OAuth2User>, UserDetailsService {
 
     private final MemberService memberService;
 
@@ -41,6 +41,7 @@ public class CustomUserService implements OAuth2UserService<OAuth2UserRequest, O
         CustomUserInfo userInfo = CustomUserInfo.of(clientRegistration, oAuth2User.getAttributes());
 
         Member member = memberService.saveOrUpdate(userInfo);
+        log.info("user getNameAttributeKey : {}",userInfo.getNameAttributeKey());
 
         // 별도로 OAuth2 리소스 서버에 데이터를 요청하려면 인증서버에서 발급해준 Access, Refresh 토큰을 저장할 것
         // > 서비스 내 인증 토큰과 혼동X!!
@@ -51,7 +52,10 @@ public class CustomUserService implements OAuth2UserService<OAuth2UserRequest, O
     }
 
 
-
-
-
+    // 로컬 로그인용 loadUser
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("local용 loadUserByUsername 통과 로그");
+        return null;
+    }
 }

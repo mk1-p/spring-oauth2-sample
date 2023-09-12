@@ -1,8 +1,10 @@
 package com.example.oauth2sample.domain.members;
 
+import com.example.oauth2sample.domain.model.AuthType;
 import com.example.oauth2sample.global.security.dto.CustomUserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Random;
@@ -25,6 +27,7 @@ public class MemberService {
      * @param userInfo
      * @return
      */
+    @Transactional(readOnly = true)
     public Member saveOrUpdate(CustomUserInfo userInfo) {
 
         // Member 객체 조회 및 세팅
@@ -42,6 +45,29 @@ public class MemberService {
 
         return memberRepository.save(member);
     }
+
+
+    @Transactional(readOnly = true)
+    public void createLocalMember(MemberDto memberDto) {
+        String email = memberDto.getEmail();
+        Member member = Member.toEntity(memberDto);
+        Member findMember = memberRepository.findByEmailAndAndAuthType(email, AuthType.LOCAL)
+                .orElseGet(null);
+
+        if (findMember != null) {
+            throw new RuntimeException("이미 존재하는 유저");
+        }
+
+        if (member.getNickname() == null) {
+            member.setNickname(initNickname());
+        }
+
+        Member saveMember = memberRepository.save(member);
+
+
+    }
+
+
 
     /**
      * 유저 닉네임 세팅

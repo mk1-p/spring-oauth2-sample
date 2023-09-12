@@ -2,7 +2,7 @@ package com.example.oauth2sample.global.security.config;
 
 
 import com.example.oauth2sample.domain.model.Role;
-import com.example.oauth2sample.global.security.application.CustomUserService;
+import com.example.oauth2sample.global.security.application.AuthUserServiceImpl;
 import com.example.oauth2sample.global.security.filter.AuthenticTokenFilter;
 import com.example.oauth2sample.global.security.handler.OAuth2LoginFailureHandler;
 import com.example.oauth2sample.global.security.handler.OAuth2LoginSuccessHandler;
@@ -23,7 +23,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Slf4j
 public class SecurityConfig {
 
-    private final CustomUserService customUserService;
+    private final AuthUserServiceImpl authUserServiceImpl;
     private final AuthenticTokenFilter authenticTokenFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -48,12 +48,18 @@ public class SecurityConfig {
 
         http
                 .formLogin(form -> form
-                        .loginPage("/user/login").permitAll())
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .loginPage("/user/login").permitAll()
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/login?error=true")
+                )
                 .oauth2Login(oauth2 -> oauth2
 //                        .loginPage("/user/login")
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customUserService))
-                        .successHandler(oAuth2LoginSuccessHandler)
+                                .userService(authUserServiceImpl))
+                                .successHandler(oAuth2LoginSuccessHandler)
+                                .failureUrl("/login?error=true")
                         .failureHandler(oAuth2LoginFailureHandler)
                 );
 
